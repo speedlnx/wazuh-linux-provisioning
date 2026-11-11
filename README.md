@@ -2,13 +2,16 @@
 Script per configurare le notifiche telegram sul mio wazuh
 
 
-Una volta scaricato esegui:
+Una volta scaricato verifica con:
 ```
 
 bash -n /root/wazuh-linux-provision-v2.1.sh \
   && echo "Sintassi Bash OK"
+```
 
+poi esegui con
 
+```
 chmod 700 /root/wazuh-linux-provision-v2.1.sh
 bash /root/wazuh-linux-provision-v2.1.sh
 ```
