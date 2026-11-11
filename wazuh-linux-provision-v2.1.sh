@@ -2,11 +2,9 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# Wazuh Linux Provisioning v2.1
+# Wazuh Linux Provisioning v2
 # Debian / Ubuntu - VM, fisico e Proxmox LXC
 # Richiede agente Wazuh già installato.
-#
-# v2.1: corretto delimitatore EOF nel blocco auditd.
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -17,14 +15,8 @@ STATE_DIR="/var/lib/wazuh-privileges"
 PRIV_LOG="/var/log/wazuh-privileges.log"
 BACKUP_DIR="/root/wazuh-provision-backup-$(date +%Y%m%d-%H%M%S)-$$"
 
-log() {
-    printf '\n[%s] %s\n' "$(date '+%H:%M:%S')" "$*"
-}
-
-die() {
-    echo "ERRORE: $*" >&2
-    exit 1
-}
+log() { printf '\n[%s] %s\n' "$(date '+%H:%M:%S')" "$*"; }
+die() { echo "ERRORE: $*" >&2; exit 1; }
 
 [[ $EUID -eq 0 ]] || die "Eseguire come root"
 [[ -f /etc/debian_version ]] || die "Richiesta Debian/Ubuntu"
@@ -115,6 +107,7 @@ from pathlib import Path
 path = Path(sys.argv[1])
 original = path.read_text()
 
+# Wazuh può avere più elementi ossec_config.
 root = ET.fromstring("<root>" + original + "</root>")
 
 sources = [
@@ -127,6 +120,7 @@ if os.environ["USE_AUDITD"] == "1":
 if Path("/var/log/auth.log").exists():
     sources.append(("syslog", "/var/log/auth.log"))
 else:
+    # Raccolta journald con filtro SSH
     sources.append(("journald", "journald"))
 
 existing = {
@@ -184,6 +178,7 @@ import grp
 import json
 import os
 import pwd
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
